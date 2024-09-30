@@ -67,79 +67,124 @@
 
 
 
-const express = require("express");
+// const express = require("express");
+// const app = express();
+
+// var users = [{
+//     name: "John",
+//     kidneys: [{
+//         healthy: false
+//     }]
+// }];
+
+// app.use(express.json());
+
+// app.get("/", function (req, res) {
+//     const johnKidneys = users[0].kidneys;
+//     const numberOfKidneys = johnKidneys.length;
+//     let numberOfHealthyKidneys = 0;
+//     for (let i = 0; i < johnKidneys.length; i++) {
+//         if (johnKidneys[i].healthy) {
+//             numberOfHealthyKidneys = numberOfHealthyKidneys + 1;
+//         }
+//     }
+
+//     const numberOfUnhealthyKidneys = numberOfKidneys - numberOfHealthyKidneys;
+//     res.json({
+//         numberOfKidneys,
+//         numberOfHealthyKidneys,
+//         numberOfUnhealthyKidneys
+//     })
+// })
+
+// app.post("/", function (req, res) {
+//     const isHealthy = req.body.isHealthy;
+//     users[0].kidneys.push({
+//         healthy: isHealthy
+//     })
+//     res.json({
+//         msg: "Done!"
+//     })
+// })
+
+// app.put("/", function (req, res) {
+//     for (let i = 0; i < users[0].kidneys.length; i++) {
+//         users[0].kidneys[i].healthy = true;
+//     }
+//     res.json({});
+// })
+
+// app.delete("/", function (req, res) {
+//     if (isThereAtleastOneUnhealthyKidney()){
+//         const newKidneys = [];
+//         for (let i = 0; i < users[0].kidneys.length; i++) {
+//             if (users[0].kidneys[i].healthy) {
+//                 newKidneys.push({
+//                     healthy: true
+//                 })
+//             }
+//         }
+//         users[0].kidneys = newKidneys;
+//         res.json({ msg: "changed" })
+//     } else {
+//         res.status(411).json({
+//             msg: "you have no bad kidneys"
+//         });
+//     }
+// })
+
+// function isThereAtleastOneUnhealthyKidney() {
+//     let atleastOneUnhealthyKidney = false;
+//     for (let i = 0; i < users[0].kidneys.length; i++) {
+//         if (!users[0].kidneys[i].healthy) {
+//             atleastOneUnhealthyKidney = true;
+//         }
+//     }
+//     return atleastOneUnhealthyKidney
+// }
+// app.listen(3000);
+
+const express = require('express');
+
 const app = express();
 
-var users = [{
-    name: "John",
-    kidneys: [{
-        healthy: false
-    }]
-}];
+// function that returns a boolean if the age of the person is more than 14
+// function isOldEnough(age) {
+//     if (age >= 14) {
+//         return true;
+//     } else {
+//         return false;
+//     }
+// }
 
-app.use(express.json());
-
-app.get("/", function (req, res) {
-    const johnKidneys = users[0].kidneys;
-    const numberOfKidneys = johnKidneys.length;
-    let numberOfHealthyKidneys = 0;
-    for (let i = 0; i < johnKidneys.length; i++) {
-        if (johnKidneys[i].healthy) {
-            numberOfHealthyKidneys = numberOfHealthyKidneys + 1;
-        }
-    }
-
-    const numberOfUnhealthyKidneys = numberOfKidneys - numberOfHealthyKidneys;
-    res.json({
-        numberOfKidneys,
-        numberOfHealthyKidneys,
-        numberOfUnhealthyKidneys
-    })
-})
-
-app.post("/", function (req, res) {
-    const isHealthy = req.body.isHealthy;
-    users[0].kidneys.push({
-        healthy: isHealthy
-    })
-    res.json({
-        msg: "Done!"
-    })
-})
-
-app.put("/", function (req, res) {
-    for (let i = 0; i < users[0].kidneys.length; i++) {
-        users[0].kidneys[i].healthy = true;
-    }
-    res.json({});
-})
-
-app.delete("/", function (req, res) {
-    if (isThereAtleastOneUnhealthyKidney()){
-        const newKidneys = [];
-        for (let i = 0; i < users[0].kidneys.length; i++) {
-            if (users[0].kidneys[i].healthy) {
-                newKidneys.push({
-                    healthy: true
-                })
-            }
-        }
-        users[0].kidneys = newKidneys;
-        res.json({ msg: "changed" })
+function isOldEnoughMiddleware(req, res, next) {
+    const age = req.query.age;
+    if (age >= 14) {
+        next();
     } else {
-        res.status(411).json({
-            msg: "you have no bad kidneys"
-        });
+        res.json({
+            msg: "Sorry you are not of age yet",
+        })
     }
+}
+
+// app.get("/ride1",isOldEnoughMiddleware, function(req, res) {
+//     res.json({
+//         msg: "You have successfully riden the ride 1",
+//     })
+// })
+
+app.use(isOldEnoughMiddleware);
+
+app.get("/ride1", function(req, res) {
+    res.json({
+        msg: "You have successfully riden the ride 1",
+    })
+})
+app.get("/ride2", function(req, res) {
+    res.json({
+        msg: "You have successfully riden the ride 2"
+    })
 })
 
-function isThereAtleastOneUnhealthyKidney() {
-    let atleastOneUnhealthyKidney = false;
-    for (let i = 0; i < users[0].kidneys.length; i++) {
-        if (!users[0].kidneys[i].healthy) {
-            atleastOneUnhealthyKidney = true;
-        }
-    }
-    return atleastOneUnhealthyKidney
-}
 app.listen(3000);
