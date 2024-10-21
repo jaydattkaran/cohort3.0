@@ -2,7 +2,17 @@ const express = require('express')
 
 const app = express();
 
-app.get("/sum", function(req, res){
+let requestCount = 0;
+
+function requestIncreaser(req, res, next){
+    requestCount = requestCount + 1;
+    console.log(`Total number of request = ${requestCount}`)
+    req.requestCount = requestCount;
+    next();
+}
+
+app.get("/sum",requestIncreaser, function(req, res){
+    // requestIncreaser(req, res);
     const a = parseInt(req.query.a);
     const b = parseInt(req.query.b);
 
@@ -11,7 +21,7 @@ app.get("/sum", function(req, res){
     })
 });
 
-app.get("/multiply", function(req, res){
+app.get("/multiply",requestIncreaser, function(req, res){
     const a = req.query.a;
     const b = req.query.b;
 
